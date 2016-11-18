@@ -1,13 +1,17 @@
+import com.google.common.io.Files;
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Dictionary {
-    private List<SymbolCoding> symbolCodings = new ArrayList<>();
+    private Map<String, String> symbolCodes = new HashMap<>();
 
     public Dictionary(HuffmanTree huffmanTree) {
         dfs(huffmanTree, "");
@@ -15,7 +19,7 @@ public class Dictionary {
 
     private void dfs(HuffmanTree node, String path) {
         if (node.isLeaf()) {
-            symbolCodings.add(new SymbolCoding(node.getSymbol(), path));
+            symbolCodes.put(node.getSymbol(), path);
         }
         if (node.getLeft() != null) {
             dfs(node.getLeft(), path + "0");
@@ -27,15 +31,44 @@ public class Dictionary {
 
     public void saveToFile() {
         try (PrintWriter file = new PrintWriter("dictionary.txt")) {
-            file.println(new Gson().toJson(symbolCodings));
+            file.println(new Gson().toJson(symbolCodes));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    @AllArgsConstructor
-    private class SymbolCoding {
-        private String symbol;
-        private String code;
+    public Dictionary(String dictionaryFile) {
+        try {
+            String content = getFileContent(dictionaryFile);
+            this.symbolCodes = new Gson().fromJson(content, Map.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void encode(String fileToEncode, int n) {
+        try {
+            String content = getFileContent(fileToEncode);
+            StringBuilder encodedContent = new StringBuilder("");
+            content.chars()
+                    .mapToObj(i -> Character.toString((char) i))
+                    .map(s -> symbolCodes.get(s))
+                    .forEach(encodedContent::append);
+            saveToFile(fileToEncode + "_encoded.txt", encodedContent.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveToFile(String fileName, String encodedContent) {
+        try (PrintWriter file = new PrintWriter(fileName)) {
+            file.println(encodedContent);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getFileContent(String fileName) throws IOException {
+        return Files.toString(new File(fileName), StandardCharsets.US_ASCII);
     }
 }

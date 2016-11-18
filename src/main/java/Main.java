@@ -16,7 +16,7 @@ public class Main {
                 createDictionary();
                 break;
             case 2:
-
+                encodeFile();
                 break;
             case 3:
 
@@ -35,5 +35,17 @@ public class Main {
         HuffmanTree huffmanTree = HuffmanTree.create(fileParser.getSymbolFrequencies());
         Dictionary dictionary = new Dictionary(huffmanTree);
         dictionary.saveToFile();
+    }
+
+    private static void encodeFile() {
+        System.out.println("Enter the name of file you would like to encode");
+        String fileToEncode = scanner.nextLine();
+        System.out.println("Enter the name of dictionary file");
+        String dictionaryFile = scanner.nextLine();
+        System.out.println("Enter the maximum length of sequences you would like to use");
+        int n = scanner.nextInt();
+        scanner.nextLine();
+        Dictionary dictionary = new Dictionary(dictionaryFile);
+        dictionary.encode(fileToEncode, n);
     }
 }
