@@ -1,6 +1,7 @@
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,6 +56,29 @@ public class Dictionary {
                     .map(s -> symbolCodes.get(s))
                     .forEach(encodedContent::append);
             saveToFile(fileToEncode + "_encoded.txt", encodedContent.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void decode(String fileToDecode) {
+        try {
+            BiMap<String, String> symbolToCode = ImmutableBiMap.copyOf(symbolCodes);
+            Map<String, String> codeToSymbol = symbolToCode.inverse();
+            String content = getFileContent(fileToDecode);
+            StringBuilder decodedContent = new StringBuilder("");
+            int decoded = 0;
+            while (decoded < content.length() - 1) {
+                int length = 0;
+                String current;
+                do {
+                    length++;
+                    current = content.substring(decoded, decoded + length);
+                } while (!codeToSymbol.containsKey(current));
+                decodedContent.append(codeToSymbol.get(current));
+                decoded += length;
+            }
+            saveToFile(fileToDecode + "_decoded.txt", decodedContent.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

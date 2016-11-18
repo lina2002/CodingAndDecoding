@@ -19,7 +19,7 @@ public class Main {
                 encodeFile();
                 break;
             case 3:
-
+                decodeFile();
                 break;
             default:
                 System.out.println("Incorrect command");
@@ -47,5 +47,14 @@ public class Main {
         scanner.nextLine();
         Dictionary dictionary = new Dictionary(dictionaryFile);
         dictionary.encode(fileToEncode, n);
+    }
+
+    private static void decodeFile() {
+        System.out.println("Enter the name of file you would like to decode");
+        String fileToDecode = scanner.nextLine();
+        System.out.println("Enter the name of dictionary file");
+        String dictionaryFile = scanner.nextLine();
+        Dictionary dictionary = new Dictionary(dictionaryFile);
+        dictionary.decode(fileToDecode);
     }
 }
