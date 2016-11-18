@@ -1,10 +1,12 @@
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Map;
 import java.util.TreeSet;
 
 @EqualsAndHashCode
+@Getter
 @ToString
 public class HuffmanTree implements Comparable<HuffmanTree> {
     private String symbol;
@@ -52,5 +54,9 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
             return this.frequency - other.frequency;
         }
         return this.symbol.compareTo(other.symbol);
+    }
+
+    public boolean isLeaf() {
+        return left == null && right == null;
     }
 }
